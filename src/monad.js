@@ -38,26 +38,13 @@ const map = (predicate, aT) => T(predicate(aT()));
  */
 
 const ap = (predicateT, aT) => {
-    // console.log('predicateT():', predicateT());
-    // console.log('predicateT()(aT()):', predicateT()(aT()));
     const b = predicateT()(aT());
     return T(b);
 };
 
-const id = x => x;
-
-const a = of(x => { console.log('a', x); return x + 100});
-const u = of(x => { console.log('u', x); return x + 10 });
-const v = of(1);
-
-
-const mapT = map(f => g => x => { console.log('inner f,g,x', `${f}, ${g}, ${x}`); return f(g(x)); }, a);
-const ap1 = ap(mapT, u);
-const ap2 = ap(ap1, v);
-console.log('apply', ap2());
-
-// const apd = ap(ap(map(f => g => x => { console.log('f,g,x', `${f}, ${g}, ${x}`); return f(g(x)); }, a), u), v);
-// console.log('apply', apd());
+// const a = of(x => { console.log('a', x); return x + 100});
+// const u = of(x => { console.log('u', x); return x + 10 });
+// const v = of(1);
 
 // const leftFn = (a, u, v) => ap(ap(map(f => g => x => f(g(x)), a), u), v);
 // const rightFn = (a, u, v) => ap(a, ap(u, v));
@@ -65,15 +52,12 @@ console.log('apply', ap2());
 // const testApFn = (a, u, v) => {
 //     const leftT = leftFn(a, u, v);
 //     const rightT = rightFn(a, u, v);
-
-//     console.log('left', leftT()())
-//     console.log('right', rightT()());
-//     return leftT === rightT;
+//     return leftT() === rightT();
 // };
 
-// const pass = testApFn(of((x) => x + 1), of((x) => x + 10), of((x) => x + 100));
+// const pass = testApFn(a, u, v);
 
-// console.log(pass)
+// console.log(pass);
 
 /**
  * Chain<T> {
@@ -82,7 +66,7 @@ console.log('apply', ap2());
  */
 const chain = (predicateReturningTValue, aT) => {
     const mapResultT = map(predicateReturningTValue, aT);
-    return mapResultT(); // todo: do we need to call or can we return original?
+    return mapResultT; // todo: do we need to call or can we return original?
 };
 
 
@@ -103,6 +87,15 @@ const chain = (predicateReturningTValue, aT) => {
  *   1. Functor's map: `A.map = (f, u) => A.chain(x => A.of(f(x)), u)`
  */
 
+// const f = x => x + 1;
+// const a = 10;
+
+// // console.log(chain(f, of(a)) === f(a));
+
+// const u = of(10);
+
+// console.log(chain(of, u) === a);
+
 // const incrementReturningT = a => of(a + 1);
 
 // const oneT = of(1);
@@ -114,3 +107,30 @@ const chain = (predicateReturningTValue, aT) => {
 // const threeT = chain(incrementReturningT, twoT);
 
 // console.log(getTValue(threeT));
+
+const compose = (...fns) =>
+    fns.reduceRight((accumulator, fn) => fn(accumulator));
+
+const prop = p => o => o[p];
+
+const getUsername = account => chain(prop('name'), chain(prop('user'), chain(prop('personal'), of(account))))();
+
+const getUsername2 = account => map(
+    compose(
+        prop('name'),
+        prop('user'),
+        prop('personal'),
+    ),
+    of(account)
+)
+
+// Might be retrieved async!
+const user = {
+  personal: {
+    user: {
+      name: 'John Doe'
+    }
+  }
+}
+
+console.log(getUsername(user));
