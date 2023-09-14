@@ -4,6 +4,9 @@ const T = (a) => () => a;
 
 const getTValue = (valueT) => valueT();
 
+
+const compose = (...fns) => fns.reduce((a, b) => (...args) => a(b(...args)));
+
 // Applicative
 
 /**
@@ -46,7 +49,7 @@ const ap = (predicateT, aT) => {
 // const u = of(x => { console.log('u', x); return x + 10 });
 // const v = of(1);
 
-// const leftFn = (a, u, v) => ap(ap(map(f => g => x => f(g(x)), a), u), v);
+// const leftFn = (a, u, v) => ap(ap(map(f => g => x => compose(f,g)(x), a), u), v);
 // const rightFn = (a, u, v) => ap(a, ap(u, v));
 
 // const testApFn = (a, u, v) => {
@@ -66,8 +69,10 @@ const ap = (predicateT, aT) => {
  */
 const chain = (predicateReturningTValue, aT) => {
     const mapResultT = map(predicateReturningTValue, aT);
-    return mapResultT; // todo: do we need to call or can we return original?
+    return mapResultT;
 };
+
+const curryChain = predicateReturningTValue => aT => map(predicateReturningTValue, aT);
 
 
 // Monad
@@ -108,21 +113,27 @@ const chain = (predicateReturningTValue, aT) => {
 
 // console.log(getTValue(threeT));
 
-const compose = (...fns) =>
-    fns.reduceRight((accumulator, fn) => fn(accumulator));
+
+
 
 const prop = p => o => o[p];
 
 const getUsername = account => chain(prop('name'), chain(prop('user'), chain(prop('personal'), of(account))))();
 
-const getUsername2 = account => map(
-    compose(
-        prop('name'),
-        prop('user'),
-        prop('personal'),
-    ),
-    of(account)
-)
+// const getUsername2 = account => map(
+//     compose(
+//         prop('name'),
+//         prop('user'),
+//         prop('personal'),
+//     ),
+//     of(account)
+// )
+
+const getUsername2 = account => compose(
+    curryChain(prop('personal')),
+    curryChain(prop('user')),
+    curryChain(prop('name')),
+)(of(account))();
 
 // Might be retrieved async!
 const user = {
@@ -133,4 +144,4 @@ const user = {
   }
 }
 
-console.log(getUsername(user));
+console.log(getUsername2(user));
