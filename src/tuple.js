@@ -1,6 +1,7 @@
-import { apply, id, of } from "./atom.js";
+import { apply, id, logT, of } from "./atom.js";
 
 
+// export const tuple = aT => bT => fn => fn(aT)(bT);
 export const tuple = aT => bT => fn => fn(aT)(bT);
 
 
@@ -13,7 +14,8 @@ const iterateTuple = (predicate) => tupleT => tupleT()((aT) => (bT) => {
         return aT;
     }
 });
-export const logTupleT = of(iterateTuple(console.log));
+
+export const logTupleT = of(iterateTuple(aT => { console.log(aT); return aT; }));
 
 // console.log('6.0');
 
@@ -38,3 +40,8 @@ export const mapPartialT = (predicate) => of(partialTupleT => predicate(partialT
 
 // apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(identityT, apply(identityT, listT))))))();
 // apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(identityT, apply(identityT, list2T))))))();
+
+
+// apply(logT, of('Hello, world'))();
+
+// apply(logTupleT, apply(logTupleT, apply(logTupleT, of(tuple(of(1))(of(2))))))();
