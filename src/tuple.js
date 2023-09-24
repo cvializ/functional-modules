@@ -27,7 +27,7 @@ export const logTupleT = of(iterateTuple(aT => { console.log(aT); return aT; }))
 
 // console.log('6.3')
 
-export const consPartialT = aT => of(partialTupleT => tuple(partialTupleT()(aT)))
+export const consPartialT = aT => of(partialTupleT => tuple(of(partialTupleT()(aT))))
 
 export const endPartialT = aT => of(partialTupleT => partialTupleT()(aT))
 
