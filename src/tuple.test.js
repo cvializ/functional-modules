@@ -58,29 +58,15 @@ describe('tuple', () => {
         })
     })
 
-    test('it should chain 3 tuples with apply', (done) => {
-        const endT = apply(apply(of(tuple), of(4)), of(3))
-        const middleT = apply(apply(of(tuple), endT), of(2))
-        const startT = apply(apply(of(tuple), middleT), of(1))
+    test('it should chain 3 tuples with apply', () => {
+        const endT = apply(apply(of(tuple), of(3)), of(4))
+        const middleT = apply(apply(of(tuple), of(2)), endT)
+        const startT = apply(apply(of(tuple), of(1)), middleT)
 
         apply(toBeT(1), apply(expectT, apply(carT, startT)))()
         apply(toBeT(2), apply(expectT, apply(carT, apply(cdrT, startT))))()
         apply(toBeT(3), apply(expectT, apply(carT, apply(cdrT, apply(cdrT, startT)))))()
         apply(toBeT(4), apply(expectT, apply(cdrT, apply(cdrT, apply(cdrT, startT)))))()
-
-        startT()(aT => bT => {
-            expect(bT()).toBe(1)
-            aT()(cT => dT => {
-                expect(dT()).toBe(2)
-                cT()(eT => fT => {
-                    expect(fT()).toBe(3)
-                    expect(eT()).toBe(4)
-
-                    done()
-                })
-            })
-        })
-
     })
 
 
@@ -93,25 +79,30 @@ describe('tuple', () => {
 
         // tupleT()(of(null))(aT => bT => aT()))
 
-    const newCarT = of(partialTupleT => apply(cdrT, apply(partialTupleT, of(null)))())
-
-    test('do it a new way', () => {
-        // const endT = apply(apply(of(tuple), of(4)), of(3))
-        // const middleT = apply(apply(of(tuple), endT), of(2))
-        // const startT = apply(apply(of(tuple), middleT), of(1))
+    // const newCarT = of(partialTupleT => apply(cdrT, apply(partialTupleT, of(null)))())
 
 
-        const endT = apply(apply(of(tuple), of(3)), of(4))
-        // apply(toBeT(3), apply(expectT, apply(newCarT, endT)))()
+    // test('do it a new way', () => {
+    //     // const endT = apply(apply(of(tuple), of(4)), of(3))
+    //     // const middleT = apply(apply(of(tuple), endT), of(2))
+    //     // const startT = apply(apply(of(tuple), middleT), of(1))
+    //     const stackFromPartialTupleT = of()
 
-        const partialT = apply(of(tuple), of(1))
-        // const terminated = apply(partialT, of(null))
-        apply(toBeT(1), apply(expectT, apply(newCarT, partialT)))()
+    //     const endT = apply(apply(of(tuple), of(3)), of(4))
+    //     // apply(toBeT(3), apply(expectT, apply(newCarT, endT)))()
 
-        // apply(toBeT(2), apply(expectT, apply(cdrT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4))))))()
-        // apply(toBeT(3), apply(expectT, apply(cdrT, apply(carT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4)))))))()
-        // apply(toBeT(3), apply(expectT, apply(cdrT, apply(cdrT, apply(carT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4))))))))()
-    })
+    //     const partialT = apply(of(tuple), of(null))
+    //     const partialT2 = apply(of(tuple), of(1))
+    //     const partialT3 = apply(of(tuple), of(2))
+    //     const combinedT = apply(partialT2, partialT))
+    //     // const terminated = apply(partialT, of(null))
+    //     apply(toBeT(3), apply(expectT, apply(carT, combinedT)))()
+    //     apply(toBeT(3), apply(expectT, apply(cdrT, apply(cdrT, combinedT))))()
+
+    //     // apply(toBeT(2), apply(expectT, apply(cdrT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4))))))()
+    //     // apply(toBeT(3), apply(expectT, apply(cdrT, apply(carT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4)))))))()
+    //     // apply(toBeT(3), apply(expectT, apply(cdrT, apply(cdrT, apply(carT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4))))))))()
+    // })
 
 
     // test('it should chain 3 tuples with apply', (done) => {

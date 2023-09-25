@@ -5,6 +5,7 @@ import { carT } from "./stack.js";
 // export const tuple = aT => bT => fn => fn(aT)(bT);
 export const tuple = aT => bT => fn => fn(aT)(bT);
 
+export const tupleT = of(tuple);
 
 // const fT = T(tupleT => tupleT()((aT) => (bT) => { console.log(aT(), bT()); return bT; }));
 const iterateTuple = (predicate) => tupleT => tupleT()((aT) => (bT) => {
