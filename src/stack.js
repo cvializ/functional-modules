@@ -1,6 +1,10 @@
 import { apply, filterT, id, idT, logT, map, of } from "./atom.js";
 import { consPartialT, endPartialT, logTupleT, tuple } from "./tuple.js";
 
+export const headT = of(tupleT => tupleT()(aT => bT => bT()))
+
+export const tailT = of(tupleT => tupleT()(aT => bT => aT()))
+
 export const carT = of(tupleT => tupleT()(aT => bT => aT()))
 
 export const cdrT = of(tupleT => tupleT()(aT => bT => bT()))
