@@ -17,6 +17,10 @@ export const logT = of(iterateT(a => { console.log(a); return a; }));
 
 export const filterT = predicate => of(value => predicate(value) ? value : null);
 
+// export const alt = (aT, bT) => apply(filterT(x => x), apply(apply(of(tuple), aT), bT))
+
+export const altT = of(alt)
+
 //   map: <a, b>(a => b, T<a>) => T<b>
 //    ap: <a, b>(T<a => b>, T<a>) => T<b>
 // chain: <a, b>(a => T<b>, T<a>) => T<b>
