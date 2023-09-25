@@ -1,5 +1,5 @@
 import { of } from "./atom";
 
-export const expectT = of(valueT => expect(valueT()));
+export const expectT = of(value => expect(value));
 
-export const toBeT = value => of(expectT => { expectT().toBe(value); return expectT() });
+export const toBeT = value => of(expectValue => { expectValue.toBe(value); return expectValue; });

@@ -1,18 +1,27 @@
 import { apply, logT, map, of } from "./atom.js";
-import { consPartialT, endPartialT, tuple } from "./tuple.js";
+import { consPartialT, endPartialT, tuple, tupleT } from "./tuple.js";
 
-export const headT = of(tupleT => tupleT()(aT => bT => bT()))
+export const headT = of(tup => tup(a => b => b))
 
-export const tailT = of(tupleT => tupleT()(aT => bT => aT()))
+export const tailT = of(tup => tup(a => b => a))
 
-export const carT = of(tupleT => tupleT()(aT => bT => aT()))
+export const carT = of(tup => tup(a => b => a))
 
-export const cdrT = of(tupleT => tupleT()(aT => bT => bT()))
+export const cdrT = of(tup => tup(a => b => b))
 
-export const newCarT = of(tupleT => apply(of(aT => bT => bT()), apply(endPartialT(null), tupleT)))
-
-const lastT = of(stackT => {
+export const lastT = of(stackT => {
     return !apply(cdrT, apply(cdrT, stackT))() ? apply(carT, stackT)() : apply(lastT, apply(cdrT, stackT))();
+});
+
+export const terminatePartialT = of(partialTuple => apply(of(partialTuple), of(null))())
+
+export const joinT = of(leftPartial => rightPartial => {
+    const rightValue = apply(carT, apply(terminatePartialT, of(rightPartial)))
+    return apply(of(leftPartial), rightValue)()
+});
+
+export const chainT = of(leftPartial => rightPartial => {
+    return apply(tupleT, apply(apply(joinT, of(leftPartial)), of(rightPartial)))()
 });
 
 const copyStackT = of(stackT => {
