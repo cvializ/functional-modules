@@ -1,5 +1,6 @@
-import { apply, of } from "./atom";
-import { carT, cdrT } from "./stack";
+import { apply, idT, logT, of } from "./atom";
+import { expectT, toBeT } from "./expect";
+import { carT, cdrT, newCarT } from "./stack";
 import { tuple } from "./tuple";
 
 describe('tuple', () => {
@@ -24,7 +25,7 @@ describe('tuple', () => {
         })
     })
 
-    test('it should work with apply', (done) => {
+    test('apply can apply it', (done) => {
         const t = apply(apply(of(tuple), of(1)), of(2))()
         t(aT => bT => {
             expect(aT()).toBe(1)
@@ -32,6 +33,16 @@ describe('tuple', () => {
             done()
         })
     })
+
+    test('it can accept applied values as elements', (done) => {
+        const t = apply(apply(of(tuple), apply(idT, of(1))), of(2))()
+
+        t(aT => bT => {
+            expect(aT()).toBe(1)
+            expect(bT()).toBe(2)
+            done()
+        })
+    });
 
     test('it should chain 2 tuples with apply', (done) => {
         const inner = apply(apply(of(tuple), of(2)), of(3))
@@ -65,6 +76,26 @@ describe('tuple', () => {
             })
         })
     })
+
+
+
+    const newCdrT = of(tupleT => tupleT()(aT => bT => bT()))
+
+    const newCarT = of(tupleT => tupleT()(aT => bT => aT()))
+
+    test('do it a new way', () => {
+        const endT = apply(apply(of(tuple), of(3)), of(4))
+        apply(toBeT(4), apply(expectT, apply(newCarT, endT)))()
+
+        const endT2 = apply(of(tuple), apply(apply(of(tuple), of(3)))
+
+        apply(toBeT(3), apply(expectT, apply(newCarT, endT2)))()
+
+        // apply(toBeT(2), apply(expectT, apply(cdrT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4))))))()
+        // apply(toBeT(3), apply(expectT, apply(cdrT, apply(carT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4)))))))()
+        // apply(toBeT(3), apply(expectT, apply(cdrT, apply(cdrT, apply(carT, apply(apply(of(tuple), of(2)), apply(apply(of(tuple), of(3)), of(4))))))))()
+    })
+
 
     // test('it should chain 3 tuples with apply', (done) => {
     //     const end = apply(apply(of(tuple), of(3)), of(null))

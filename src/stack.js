@@ -5,6 +5,9 @@ export const cdrT = of(tupleT => tupleT()(aT => bT => aT()))
 
 export const carT = of(tupleT => tupleT()(aT => bT => bT()))
 
+export const newCarT = of(tupleT => apply(of(aT => bT => bT()), apply(endPartialT(null), tupleT)))
+
+
 // apply(logTupleT, apply(consPartialT(T(1)), T(tuple(T(3))(T(4)))));
 // apply(logTupleT, apply(consPartialT(T(1)), tuple(T(3))));
 const stackT = apply(endPartialT(of(3)), apply(consPartialT(of(2)), apply(consPartialT(of(1)), of(tuple(of(null))))));

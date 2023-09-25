@@ -1,4 +1,5 @@
 import { apply, id, logT, of } from "./atom.js";
+import { carT } from "./stack.js";
 
 
 // export const tuple = aT => bT => fn => fn(aT)(bT);
@@ -29,6 +30,8 @@ export const logTupleT = of(iterateTuple(aT => { console.log(aT); return aT; }))
 
 export const consPartialT = aT => of(partialTupleT => tuple(of(partialTupleT()(aT))))
 
+export const consPartialTT = of(aT => of(partialTupleT => tuple(of(partialTupleT()(aT)))))
+
 export const endPartialT = aT => of(partialTupleT => partialTupleT()(aT))
 
 // const listT = apply(endPartialT(of(1)), apply(consPartialT(of(2)), apply(consPartialT(of(3)), of(tuple(of(4))))))
@@ -40,7 +43,6 @@ export const mapPartialT = (predicate) => of(partialTupleT => predicate(partialT
 
 // apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(identityT, apply(identityT, listT))))))();
 // apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(logTupleT, apply(identityT, apply(identityT, list2T))))))();
-
 
 // apply(logT, of('Hello, world'))();
 
