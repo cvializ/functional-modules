@@ -1,8 +1,5 @@
-import { apply, of } from "./atom";
+import { apply, filterT, of } from "./atom";
 import { expectT, toBeT } from "./expect";
-
-
-const filterT = predicate => of(valueT => predicate(valueT()) ? valueT() : null);
 
 
 describe('filterT', () => {

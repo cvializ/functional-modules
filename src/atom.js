@@ -13,12 +13,6 @@ export const idT = of(aT => aT());
 
 export const iterateT = predicate => aT => predicate(aT());
 
-// const actualIterateT = predicate => of(aT => { return predicate(aT); });
-
 export const logT = of(iterateT(aT => { console.log(aT); return aT; }));
 
-// export const filterT = of(conditionFn => iterateT(aT => conditionFn(aT)() ? aT : of(null)));
-// export const filterT = conditionFn => of(iterateT(aT => conditionFn(aT) ? aT : of(null)));
-export const filterT = conditionFn => of(valueT => predicate(valueT()) ? valueT() : null);
-
-// apply(logT, apply(filterT(x => x === 2), apply(idT, of(2))))()
+export const filterT = predicate => of(valueT => predicate(valueT()) ? valueT() : null);
