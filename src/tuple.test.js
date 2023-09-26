@@ -47,24 +47,28 @@ describe('tuple', () => {
     });
 
     test('it should chain 2 tuples with apply', (done) => {
-        const inner = apply(apply(of(tuple), of(2)), of(3))
-        const outer = apply(apply(of(tuple), inner), of(1))()
+        const innerT = apply(apply(of(tuple), of(3)), of(2))
+        const outerT = apply(apply(of(tuple), innerT), of(1))
 
-        outer(a => b => {
+        apply(toBeT(1), apply(expectT, apply(carT, outerT)))()
+        apply(toBeT(2), apply(expectT, apply(carT, apply(cdrT, outerT))))()
+        apply(toBeT(3), apply(expectT, apply(cdrT, apply(cdrT, outerT))))()
+
+        outerT()(a => b => {
             expect(b).toBe(1)
 
             a(c => d => {
-                expect(c).toBe(2)
-                expect(d).toBe(3)
+                expect(d).toBe(2)
+                expect(c).toBe(3)
                 done()
             })
         })
     })
 
     test('it should chain 3 tuples with apply', () => {
-        const endT = apply(apply(of(tuple), of(3)), of(4))
-        const middleT = apply(apply(of(tuple), of(2)), endT)
-        const startT = apply(apply(of(tuple), of(1)), middleT)
+        const endT = apply(apply(of(tuple), of(4)), of(3))
+        const middleT = apply(apply(of(tuple), endT), of(2))
+        const startT = apply(apply(of(tuple), middleT), of(1))
 
         apply(toBeT(1), apply(expectT, apply(carT, startT)))()
         apply(toBeT(2), apply(expectT, apply(carT, apply(cdrT, startT))))()

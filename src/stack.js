@@ -5,9 +5,9 @@ export const headT = of(tup => tup(a => b => b))
 
 export const tailT = of(tup => tup(a => b => a))
 
-export const carT = of(tup => tup(a => b => a))
+export const carT = of(tup => tup(a => b => b))
 
-export const cdrT = of(tup => tup(a => b => b))
+export const cdrT = of(tup => tup(a => b => a))
 
 export const lastT = of(stack => {
     return !apply(cdrT, of(stack))() ? apply(carT, of(stack))() : apply(lastT, apply(cdrT, of(stack)))();
@@ -23,13 +23,13 @@ export const lastApT = of(stack => {
 
 export const terminatePartialT = of(partialTuple => apply(of(partialTuple), of(null))())
 
-export const joinT = of(leftPartial => rightPartial => {
-    const rightValue = apply(carT, apply(terminatePartialT, of(rightPartial)))
-    return apply(of(leftPartial), rightValue)()
+export const joinT = of(firstPartial => secondPartial => {
+    const firstValue = apply(cdrT, apply(terminatePartialT, of(firstPartial)))
+    return apply(of(secondPartial), firstValue)()
 });
 
-export const chainT = of(leftPartial => rightPartial => {
-    return apply(tupleT, apply(apply(joinT, of(leftPartial)), of(rightPartial)))()
+export const chainT = of(firstPartial => secondPartial => {
+    return apply(tupleT, apply(apply(joinT, of(secondPartial)), of(firstPartial)))()
 });
 
 const copyStackT = of(stackT => {
