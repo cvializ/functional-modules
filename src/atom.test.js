@@ -1,4 +1,4 @@
-import { alt, apply, filterT, map, of } from "./atom";
+import { alt, apply, filterT, id, lift2, map, of } from "./atom";
 import { expectT, toBeT } from "./expect";
 
 
@@ -18,13 +18,7 @@ describe('apply laws', () => {
         const u = of(x => x)
         const v = of(1)
 
-        apply(toBeT(1), apply(expectT, apply(apply(map(f => g => x => f(g(x)), a), u), v)))()
+        apply(toBeT(1), apply(expectT, apply(apply(map(f => g => x => f(g(x)))(a), u), v)))()
         apply(toBeT(1), apply(expectT, apply(a, apply(u, v))))()
     })
 })
-
-// describe('alt', () => {
-//     test('alts', () => {
-//         apply(toBeT(1), apply(expectT, alt(of(1), of(0))))
-//     })
-// })

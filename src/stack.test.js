@@ -1,6 +1,6 @@
-import { apply, of } from "./atom";
+import { apply, chain, id, logT, map, of } from "./atom";
 import { expectT, toBeT } from "./expect";
-import { carT, cdrT, chainT, joinT, lastT, terminatePartialT } from "./stack";
+import { car, carT, cdr, cdrT, chainT, joinT, lastT, terminatePartialT } from "./stack";
 import { tuple, tupleT } from "./tuple";
 
 describe('carT and cdr', () => {
@@ -87,5 +87,44 @@ describe('stack last', () => {
         apply(toBeT(null), apply(expectT, apply(cdrT, apply(cdrT, apply(cdrT, apply(cdrT, stackT))))))()
 
         apply(toBeT(1), apply(expectT, apply(lastT, stackT)))()
+    })
+})
+
+describe('chain', () => {
+    test('works', () => {
+        const stack = tuple(tuple(tuple(tuple(null)(1))(2))(3))(4)
+
+        // chain functions need to accept non-wrapped and return a wrapped value
+        const ccar = tup => of(car(tup))
+        const ccdr = tup => of(cdr(tup))
+
+        apply(toBeT(4), apply(expectT, chain(ccar, of(stack))))()
+        apply(toBeT(3), apply(expectT, chain(ccar, chain(ccdr, of(stack)))))()
+        apply(toBeT(2), apply(expectT, chain(ccar, chain(ccdr, chain(ccdr, of(stack))))))()
+        apply(toBeT(1), apply(expectT, chain(ccar, chain(ccdr, chain(ccdr, chain(ccdr, of(stack)))))))()
+        apply(toBeT(null), apply(expectT, chain(ccdr, chain(ccdr, chain(ccdr, chain(ccdr, of(stack)))))))()
+    })
+
+    test('map equivalent', () => {
+        const prop = k => xs =>
+            k in xs ? of(xs[k])
+                    : of(null)
+
+        const data = { a: { b: { c: 2 } } }
+
+        // // How do we get to the 2?
+        // prop('a')(data) // Just({ b: { c: 2 } })
+        //     .map(prop('b')) // Just(Just({ c: 2 }))
+        //     .map(map(prop('c'))) // Just(Just(Just(2)))
+
+        apply(toBeT({b: {c: 2}}), apply(expectT, prop('a')(data)))()
+        apply(toBeT({c: 2}), apply(expectT, map(prop('b'))(prop('a')(data))()))()
+        apply(toBeT(2), apply(expectT, map(map(prop('c')))(map(prop('b'))(prop('a')(data)))()()))()
+
+        // prop('a')(data) // Just({ b: { c: 2 } })
+        // .chain(prop('b')) // Just({ c: 2 })
+        // .chain(prop('c')) // Just(2)
+
+        apply(toBeT(2), apply(expectT, chain(prop('c'), chain(prop('b'), prop('a')(data)))))()
     })
 })

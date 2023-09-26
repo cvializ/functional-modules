@@ -1,9 +1,13 @@
 import { apply, logT, map, of } from "./atom.js";
 import { tuple, tupleT } from "./tuple.js";
 
-export const carT = of(tup => tup(a => b => b))
+export const car = tup => tup(a => b => b)
 
-export const cdrT = of(tup => tup(a => b => a))
+export const carT = of(car)
+
+export const cdr = tup => tup(a => b => a)
+
+export const cdrT = of(cdr)
 
 export const lastT = of(stack => {
     return !apply(cdrT, of(stack))() ? apply(carT, of(stack))() : apply(lastT, apply(cdrT, of(stack)))();
