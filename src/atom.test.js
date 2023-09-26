@@ -23,8 +23,8 @@ describe('apply laws', () => {
     })
 })
 
-describe('alt', () => {
-    test('alts', () => {
-        apply(toBeT(1), apply(expectT, alt(of(1), of(0))))
-    })
-})
+// describe('alt', () => {
+//     test('alts', () => {
+//         apply(toBeT(1), apply(expectT, alt(of(1), of(0))))
+//     })
+// })

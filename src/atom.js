@@ -19,7 +19,7 @@ export const filterT = predicate => of(value => predicate(value) ? value : null)
 
 // export const alt = (aT, bT) => apply(filterT(x => x), apply(apply(of(tuple), aT), bT))
 
-export const altT = of(alt)
+// export const altT = of(alt)
 
 //   map: <a, b>(a => b, T<a>) => T<b>
 //    ap: <a, b>(T<a => b>, T<a>) => T<b>
