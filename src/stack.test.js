@@ -1,10 +1,10 @@
-import { apply, logT, of } from "./atom";
+import { apply, of } from "./atom";
 import { expectT, toBeT } from "./expect";
-import { apLastT, carT, cdrT, chainT, headT, joinT, lastApT, lastT, tailT, terminatePartialT } from "./stack";
+import { carT, cdrT, chainT, joinT, lastT, terminatePartialT } from "./stack";
 import { tuple, tupleT } from "./tuple";
 
 describe('carT and cdr', () => {
-    test('it should work', () => {
+    test('it should work for tuples', () => {
         apply(toBeT(1), apply(expectT, apply(carT, apply(apply(of(tuple), of(2)), of(1)))))()
         apply(toBeT(2), apply(expectT, apply(cdrT, apply(apply(of(tuple), of(2)), of(1)))))()
 
@@ -13,7 +13,6 @@ describe('carT and cdr', () => {
     })
 
     test('it should work for stacks', () => {
-
         const stackT = of(
             tuple(tuple(tuple(null)(1))(2))(3))
 
@@ -23,14 +22,14 @@ describe('carT and cdr', () => {
         apply(toBeT(null), apply(expectT, apply(cdrT, apply(cdrT, apply(cdrT, stackT)))))()
     })
 
-    test('combine partial tuples with join into a tuple', () => {
-        const partialT = apply(tupleT, of(null))
-        const partialT1 = apply(tupleT, of(1))
+    test('join combines 2 partial tuples into a tuple', () => {
+        const firstT = apply(tupleT, of(1))
+        const secondT = apply(tupleT, of(2))
 
-        const joined2T = apply(apply(joinT, partialT), partialT1)
+        const joinedT = apply(apply(joinT, firstT), secondT)
 
-        apply(toBeT(null), apply(expectT, apply(carT, joined2T)))()
-        apply(toBeT(1), apply(expectT, apply(cdrT, joined2T)))()
+        apply(toBeT(1), apply(expectT, apply(carT, joinedT)))()
+        apply(toBeT(2), apply(expectT, apply(cdrT, joinedT)))()
     });
 
     test('combine partial tuples with chain into a new partial tuple', () => {
@@ -48,10 +47,10 @@ describe('carT and cdr', () => {
         // const stackT = of(
         //     tuple(tuple(tuple(tuple(null)(1))(2))(3))(null))
 
-        apply(toBeT(3), apply(expectT, apply(headT, apply(tailT, stackT))))()
-        apply(toBeT(2), apply(expectT, apply(headT, apply(tailT, apply(tailT, stackT)))))()
-        apply(toBeT(1), apply(expectT, apply(headT, apply(tailT, apply(tailT, apply(tailT, stackT))))))()
-        apply(toBeT(null), apply(expectT, apply(tailT, apply(tailT, apply(tailT, apply(tailT, stackT))))))()
+        apply(toBeT(3), apply(expectT, apply(carT, apply(cdrT, stackT))))()
+        apply(toBeT(2), apply(expectT, apply(carT, apply(cdrT, apply(cdrT, stackT)))))()
+        apply(toBeT(1), apply(expectT, apply(carT, apply(cdrT, apply(cdrT, apply(cdrT, stackT))))))()
+        apply(toBeT(null), apply(expectT, apply(cdrT, apply(cdrT, apply(cdrT, apply(cdrT, stackT))))))()
 
         apply(toBeT(1), apply(expectT, apply(lastT, stackT)))()
     })
@@ -59,13 +58,6 @@ describe('carT and cdr', () => {
 
 describe('stack last', () => {
     test('takes the last item of a three element stack', () => {
-        // const stackT = of(
-        //     tuple(1)(
-        //     tuple(2)(
-        //         tuple(3)(null))
-        //     )
-        // )
-
         const stackT = of(
             tuple(tuple(tuple(null)(1))(2))(3))
 
@@ -89,12 +81,11 @@ describe('stack last', () => {
 
         const stackT = apply(terminatePartialT, chainedPartial3T)
 
-        apply(toBeT(3), apply(expectT, apply(headT, apply(tailT, stackT))))()
-        apply(toBeT(2), apply(expectT, apply(headT, apply(tailT, apply(tailT, stackT)))))()
-        // TODO: fix
-        // apply(toBeT(1), apply(expectT, apply(headT, apply(tailT, apply(tailT, apply(tailT, apply(tailT, stackT)))))))()
-        // apply(toBeT(null), apply(expectT, apply(cdrT, apply(cdrT, apply(cdrT, stackT)))))()
+        apply(toBeT(3), apply(expectT, apply(carT, apply(cdrT, stackT))))()
+        apply(toBeT(2), apply(expectT, apply(carT, apply(cdrT, apply(cdrT, stackT)))))()
+        apply(toBeT(1), apply(expectT, apply(carT, apply(cdrT, apply(cdrT, apply(cdrT, stackT))))))()
+        apply(toBeT(null), apply(expectT, apply(cdrT, apply(cdrT, apply(cdrT, apply(cdrT, stackT))))))()
 
-        // apply(toBeT(4), apply(expectT, apply(lastT, stackT)))()
+        apply(toBeT(1), apply(expectT, apply(lastT, stackT)))()
     })
 })

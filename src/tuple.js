@@ -17,10 +17,4 @@ const iterateTuple = (predicate) => tupleT => tupleT()((aT) => (bT) => {
 
 export const logTupleT = of(iterateTuple(aT => { console.log(aT); return aT; }));
 
-export const consPartialT = aT => of(partialTupleT => tuple(of(partialTupleT()(aT))))
-
-export const consPartialTT = of(aT => of(partialTupleT => tuple(of(partialTupleT()(aT)))))
-
-export const endPartialT = aT => of(partialTupleT => partialTupleT()(aT))
-
 export const mapPartialT = (predicate) => of(partialTupleT => predicate(partialTupleT()));
